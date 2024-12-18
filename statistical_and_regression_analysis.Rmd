@@ -1,0 +1,766 @@
+---
+title: "Term Project"
+author: "Sharma, Biswajit"
+date: "2023-11-05"
+header-includes:
+  \usepackage{fvextra}
+  \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Analysis and Prediction of Obesity based on eating habits and physical activity
+
+
+## Introduction
+
+  _Obesity_ is a medical condition that is related to the excessive accumulation of body fat. It is not only a cosmetic concern but rather a medical problem that can increase the risk of other health problems and diseases like heart diseases, diabetes, high cholesterol, high blood pressure, liver disease, musculoskeletal disorders, and certain cancers. Since 1997, WHO has considered obesity a global epidemic and a significant health problem. To prevent obesity, various organizations, including government and non-government, are promoting campaigns regarding two main risk factors: eating habits and physical activity (Gozukara et al., 2023).
+
+Although it is known that excessive intake of calories can cause obesity, nutritional factors like low-quality diet, unbalanced diet, processed foods, and alcohol consumption can also increase the risk of obesity. Physical activity has also been very influential in controlling or preventing obesity. The frequency, duration, and intensity of physical activity and exercises play an essential role in the effective prevention and reduction of obesity (Gozukara et al., 2023).
+
+Obesity levels are measured by BMI (Body Mass Index) which is the ratio between body weight and height, calculated as below equation (Body Mass Index, CDC, n.d.).
+
+  $BMI=\frac{Body Weight}{Height^2}$            (Equation. 1)
+
+BMI greater than `30` is considered _Obesity_ and between `25` to `30` is considered _Overweight_ (Defining Adult Overweight & Obesity, CDC, n.d.).
+
+This analysis will investigate the relationship of Obesity and Body Mass Index (BMI) with eating habits and physical activity. This study can help to identify patterns associated with obesity, such as the quality and quantity of food intake, frequency, duration, and intensity of physical activity. This study can also help to determine the optimal amount and type of physical activity for each obesity level based on the individual’s age and gender. Similarly, this study can help to design a balanced and nutritious diet plan for each obesity level. Furthermore, this study will generate a model to estimate obesity and BMI based on eating habits and physical activity.
+
+## Research Questions
+
+  1. Determine if we can estimate the BMI (Body Mass Index) and obesity based on eating habits and     physical activity.
+  2. Explore how BMI and obesity vary with the weight and height.
+  3. Investigate the relationship between height and weight.
+  4. Investigate the relationship between vegetable consumption and weight and BMI.
+  5. Investigate the relationship between alcohol consumption and weight and BMI
+  6. Investigate the relationship between taking food between meals and weight and BMI
+  7. Investigate the relationship between calories consumed and weight and BMI
+  8. Investigate the relationship of physical activity with weight, height and BMI
+  9. Investigate the relationship between family history of overweight and weight and BMI
+  10. Explore if the factors other than eating habits and physical activity like ethnicity and geography also influence obesity.
+
+
+## Approach
+  
+As mentioned above (Equation. 1), BMI is calculated from weight and height. Therefore, in order to determine the relationship between obesity and eating habits, and physical activity, we need to identify that there is a relationship between weight, height, eating habits, and physical activity. If we find a relationship between eating habits and physical activity with weight and height. In that case, we can estimate the influence (negative or positive) of these factors on BMI and obesity.
+
+Exploratory data analysis will help to identify relationships, patterns, and gather insights from the dataset. The correlation matrix will help to identify the correlation between the numerical variables and BMI. T-tests will confirm if there is evidence of a relationship between eating habits, physical activity, and BMI. ANOVA will help to analyze the variance and how much variation in the BMI is accounted for by eating habits and physical activity.
+
+Various plots like histograms and QQ plots will identify the distribution of the variables regarding various obesity levels. Box plots will aid in determining five-point summary statistics and locating outliers. Scatter plots will help to identify any linear relationship between BMI, weight, height, eating habits, and physical activity.
+
+Furthermore, we can model the data to predict BMI and obesity based on eating habits and physical activity.
+
+
+## Data
+
+1.  _UC Irvine Machine Learning Repository - Obesity levels, Eating Having and Physical activity dataset_.
+
+This dataset include data about eating habits, physical activity, weight, height and obesity levels of
+individuals from the countries of mexico, Peru and Columbia. The data includes the eating habits and
+physical activity levels of 498 participants aged between 14 and 61 years (UCI.2019).
+    
+The originally collected data was preprocessed, such as the removal of missing values, and 
+normalization was performed. It was also balanced to reduce the skewness of the obesity levels. 23% of the
+source data is actual responses collected over a 30-day survey, while the remaining 77%  was synthetically
+generated using SMOTE (Palechor & de la Hoz Manotas, 2019). 
+
+We will use this dataset to perform analysis and mining of relationship of weight, height and 
+obesity with eating Having and physical activity. We will also use this data for prediction of 
+obesity using eating habits and physical activity as predictors.
+        
+Variables:  
+        
+There are 17 variables in the dataset.
+
+          - Gender
+          - Age
+          - Height
+          - Weight
+          - Family History of overweight
+          - Frequency of consumption of high caloric food (FAVC)
+          - Frequency of consumption of vegetables (FCVC)
+          - Number of main meals (NCP)
+          - Consumption of food between meals (CAEC)
+          - Daily consumption of water (CH20)
+          - Consumption of alcohol (CALC)
+          - Calorie consumption monitoring done (SCC)
+          - Frequency of Physical activity (FAF)
+          - Measuring Physical activity time using devices (TUE)
+          - Mode of transportation used (MTRANS)
+          - Obesity Level
+
+Obesity level is labelled in the source data based on mass body index calculation (Equation. 1) and then compared with data provided by WHO (Palechor & de la Hoz Manotas, 2019).  
+
+        - Underweight when BMI Less than 18.5
+        - Normal when BMI 18.5 to 24.9
+        - Overweight when BMI 25.0 to 29.9
+        - Obesity I when BMI 30.0 to 34.9
+        - Obesity II when BMI 35.0 to 39.9
+        - Obesity III when BMI Higher than 40
+  
+2.  _CDC Nutrition, Physical Activity and Obesity._
+
+This dataset includes data on adults diet, physical activity and weight status from Behavioral Risk Factor
+Surveillance System (Nutrition, Physical Activity, and Obesity, CDC, 2023). 
+        
+This dataset has 33 columns, however the main columns which will be used in this study are given below.
+  
+          - LocationAbbr (Location of the datasoure like particular US State or territories)
+          - Topic (Obesity or Physical Activity)
+          - Question (Question regarding obesity, overweight and physical activity)
+          - Data Value (in percentage of population)
+          - Race/Ethnicity
+ 
+This dataset will be used to analyze the distribution and variation in the percentage of obesity in adults based on geography and ethnicity. Analysis of the dataset will help identify whether obesity varies with race/ethnicity and geography.
+  
+## Required packages
+
+This study will require below R packages for ingestion, analysis, tranaformation, manipulation, visualizations and modeling of data.
+
+  - dplyr
+  - ggplot2
+  - purrr
+  - tidyr
+  - metrics
+  - car
+  - mlogit
+  - magrittr
+  - reshape2
+  - tidyr
+  - usmap
+
+## Plots
+
+Various plots like histograms and QQ plots will identify the distribution of the variables regarding various obesity levels. Box plots will aid in determining five-point summary statistics and locating outliers. Scatter plots will help to identify any linear relationship between BMI, weight, height, eating habits, and physical activity. Residual plots and normality plots will be used to identify normality assumption and presence of bias in the model.
+
+## Questions for future steps
+  1. Explore if there are duplicate rows or missing data in the dataset.
+  2. Explore if multicollinearity exists between the variables.
+  3. Determine if we need to transform variables or generate new variables for modeling. Check for outliers and identify if outliers need to be removed before modeling. Identify if we need any transformation of categorical to numeric variables.
+  4. Suppose we create a model to estimate obesity and BMI based on eating habits and physical activity. How well does that model fit the data, whether the model generalizes well or the generated model has any bias? Investigate whether the model follows the assumptions of linearity, homoscedasticity, and normality.
+  5. Determine which variables from the dataset we need to use as predictors in modeling.
+
+## Milestone #2
+
+## Data import and Cleaning
+
+```{r, include=FALSE}
+library(magrittr)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(scales)
+library(mlogit)
+library(car)
+library(tidyr)
+library(usmap)
+```
+
+Import and inspect structure of the dataset (UCI, 2019).
+
+```{r}
+obesity_df <- read.csv("C:/Users/babub/Documents/Bellevue/DSC520/ObesityDataSet_raw_and_data_sinthetic.csv")
+
+str(obesity_df)
+```
+View few rows of the dataset
+
+```{r, echo=FALSE}
+head(obesity_df)
+```
+
+## Data cleaning and transformation
+
+Check for NAs in the dataset
+
+```{r,}
+colSums(is.na(obesity_df))
+```
+We see that there are no NAs in the dataset. Lets check for duplicate rows.
+
+```{r,}
+obesity_df %>% dplyr::group_by_all() %>% filter(n() > 1) %>% ungroup() %>% nrow()
+```
+We see that there are `33` duplicate rows. Lets drop the duplicate rows.
+
+```{r,}
+obesity_df <- obesity_df %>% distinct(.keep_all = TRUE)
+```
+
+Lets Validate that there are no more duplicate rows.
+
+```{r,}
+obesity_df %>% dplyr::group_by_all() %>% filter(n() > 1) %>% ungroup() %>% nrow()
+```
+## New feature generation
+
+We see that BMI is not available in the dataset. However, we can calculate the BMI using equation 1. Lets create a new column named BMI using equation 1.
+
+```{r}
+obesity_df <- obesity_df %>% mutate(BMI=Weight/(Height^2))
+```
+
+## Correlation between Numeric variables
+
+Lets check the correlation between the numeric variables using **_heat map_** to identify high collinearity.
+
+```{r, fig.keep='high', fig.show='hold'}
+obesity.cor <- cor(obesity_df %>% select(Age, Height, Weight, FCVC, NCP, CH2O, FAF, TUE))
+obesity.melt <- melt(obesity.cor, varname=c("x","y"), value.name="Correlation")
+ggplot(obesity.melt, aes(x=x,y=y)) + geom_tile(aes(fill=Correlation)) +
+  scale_fill_gradient2(low=muted("red"), 
+                       mid="white", high="steelblue", 
+                       guide=guide_colorbar(ticks=FALSE, barheight=10),
+                       limits=c(-1,1)) +
+  theme_minimal() +
+  labs(title="Heat Map of Correlation between numerical variables", x=NULL,y=NULL)
+```
+Based on the above heat map, we observe:
+
+ - a moderate positive correlation between _Height_ and _Weight_
+ - a moderate negative correlation between _Age_ and _Measuring Physical activity time using devices (TUE)_
+ - a mild negative correlation between _FAF_ and _Age_
+ - a mild correlation between _Age_ and _weight_
+ - a mild positive correlation between _Physical Activity (FAF)_ , _Number of Meals (NCP)_ and _Height_
+ - a mild positive correlation between _Frequency of consumption of vegetables (FCVC)_ and _Weight_
+ - a small positive correlation between _Consumption of water (CH20)_ and _Weight_
+ - a mild positive correlation between _Height_ and _Physical Activity (FAF)_
+ - a mild negative correlation between _Measuring Physical activity time using devices (TUE)_ and _Consumption of vegetables (FCVC)_
+
+**As we do not see high correlation between the numerical variables, we can say that there is no concern of multicollinearity if these numerical variables are used as predictors in a model.**
+
+## Investigate the relationship between Height and Weight.
+
+From above _heat map_ we see a moderate positive correlation between Height and Weight, lets perform a _t-test_ to check if the relationship also exists in population.
+ 
+```{r}
+cor.test(obesity_df$Height, obesity_df$Weight)
+```
+The t-test show that there is evidence to reject _Null Hypothesis_ and we can say that there is relationship between Height and Weight in the population of the sample as p-value < `0.001`. The _correlation coefficient_ is `0.46` which shows that the relationship is positive and Weight tends to increase with an increase in Height.
+
+
+## Explore how BMI and obesity vary with the weight and height.
+
+Let plot some scatter plots to check the BMI against weight and height,
+
+```{r, fig.align='center', fig.show='hold'}
+ggplot(obesity_df, aes(x=Weight, y=BMI)) + geom_point() + labs(title="Scatter plot of BMI against Weight",x="Weight", y="BMI")
+ggplot(obesity_df, aes(x=Height, y=BMI)) + geom_point() + labs(title="Scatter plot of BMI against Height", x="Height", y="BMI")
+```
+The scatter plots show that there is very high _positive correlation_ between BMI and Weight. However, the relationship between BMI and Height is inconclusive from the scatter plot as the plot has random points.
+
+Lets perform a `t-test` to investigate the relationship BMI and Weight in the population.
+
+```{r}
+cor.test(obesity_df$BMI, obesity_df$Weight)
+```
+
+The t-test show that there is evidence to reject _Null Hypothesis_ and we can say that there is relationship between BMI and Weight in the population of the sample as p < `0.001`. The _correlation coefficient_ is `0.93` which shows that there is a strong positive correlation between BMI and weight and BMI tends to increase proportionately with an increase in Weight.
+
+Lets perform a `t-test` to investigate the relationship BMI and Height in the population.
+
+```{r}
+cor.test(obesity_df$BMI, obesity_df$Height)
+```
+The t-test show that there is evidence to reject _Null Hypothesis_ and we can say that there is relationship between BMI and weight in the population of the sample as p < 0.001. The _correlation coefficient_ is `0.12` which shows a small positive correlation between BMI and Height.
+
+## Investigate the relationship between vegetable consumption and weight and BMI.
+
+Lets plot some scatter plots to check the Frequency of Consumption of vegetables (FCVC) against weight and BMI.
+
+
+```{r, fig.align='center', fig.show='hold'}
+ggplot(obesity_df, aes(x=Weight, y=FCVC)) + geom_point() + labs(title="Scatter plot of Frequency of vegetable consumption against Weight",x="Weight", y="FCVC")
+ggplot(obesity_df, aes(x=BMI, y=FCVC)) + geom_point() + labs(title="Scatter plot of Frequency of vegetable consumption against BMI", x="BMI", y="FCVC")
+```
+
+No apparent relationship is conclusive from the scatter plots. Lets perform a `t-test` to check any relationship between these variables in the population.
+
+```{r}
+cor.test(obesity_df$Weight, obesity_df$FCVC)
+```
+The bove t-test show that there is evidence to reject _Null Hypothesis_ and we can say that there is some relationship between Weight and Frequency of vegetable consumption (FCVC) in the population of the sample as p < `0.001`. The _correlation coefficient_ is `0.22` which shows that there is a mild positive correlation between Weight and Frequency of vegetable consumption (FCVC).
+
+```{r}
+cor.test(obesity_df$BMI, obesity_df$FCVC)
+```
+The above t-test show that there is evidence to reject _Null Hypothesis_ and we can say that there is some relationship between Weight and FCVC in the population of the sample as p < `0.001`. The _correlation coefficient_ is `0.26` which shows that there is a mild positive correlation between BMI and Frequency of vegetable consumption (FCVC).
+
+
+## Investigate the relationship between alcohol consumption (CALC) and Weight and BMI
+
+As alcohol consumption (CALC) is a categorical variable we will need to see the distribution of BMI across the alcohol consumption categories.
+
+```{r, fig.align='center', fig.show='hold'}
+ggplot(obesity_df) + 
+  geom_boxplot(aes(y=Weight, x=1,color=CALC)) + 
+  labs(title="Box plot of Weight",y="Weight") + facet_wrap(~CALC)
+
+ggplot(obesity_df) + 
+  geom_boxplot(aes(y=BMI, x=1,color=CALC)) + 
+  labs(title="Box plot of BMI",y="Weight") + facet_wrap(~CALC)
+```
+
+Based on the above plots, we can see that the consumption of alcohol have a tendency for higher BMI and Weight than those who do not consume alcohol. This might be an indication of relationship between some elevated alcohol consumption and obesity.
+
+Lets create a crosstable between alcohol consumption and obesity levels.
+
+```{r, warning=FALSE, echo=FALSE}
+cross_tab.1 <- table(obesity_df$CALC, obesity_df$NObeyesdad)
+addmargins(cross_tab.1, FUN=sum, quiet=TRUE)
+
+```
+```{r}
+((351+297+324+276+290) - (165+71+1+50+128))/(351+297+324+276+290) * 100
+```
+
+The above table with marginal totals shows that the number of persons having obesity and who consume alcohol are much higher than who doesn't. **`73`%** of the persons having obesity consume alcohol. 
+
+Lets perform a `chi-square` test to check for relationship will exist in the population.
+
+```{r,warning=FALSE}
+chisq.test(obesity_df$CALC, obesity_df$NObeyesdad)
+```
+Chi-sqaure test show that there is evidence to reject the _Null Hypothesis_ and conclude that there is some _relationship between alcohol consumption and obesity as p-vale < `0.001`._
+
+## Investigate the relationship between taking food between meals and weight and BMI
+
+As taking food between meals (CAEC) is a categorical variable, we will need to see the distribution of BMI across the categories.
+
+```{r, fig.align='center', fig.show='hold'}
+ggplot(obesity_df) + geom_histogram(aes(x=Weight, y=after_stat(density),fill=CAEC), binwidth=10, position = "dodge")
+ggplot(obesity_df) + geom_histogram(aes(x=BMI, y=after_stat(density),fill=CAEC), binwidth=5, position = "dodge")
+```
+
+Based on the above plots, we can see that those who take food between meals do have a tendency of higher Weight and BMI than those who doesn't. This might be an indication of relationship between taking food between meals and and obesity.
+
+Lets create a crosstable between taking food between meals and obesity levels.
+
+```{r, warning=FALSE, echo=FALSE}
+cross_tab.2 <- table(obesity_df$CAEC, obesity_df$NObeyesdad)
+addmargins(cross_tab.2, FUN=sum, quiet=TRUE)
+```
+
+```{r}
+((351+297+324+276+290) - (1+1+21+1))/(351+297+324+276+290) * 100
+```
+
+The above table with marginal totals shows that the number of persons having obesity do take food between meals. **`98`%** of the persons having obesity do take food between meals. 
+
+Lets perform a `chi-square` test to check for relationship will exist in the population.
+
+```{r,warning=FALSE}
+chisq.test(obesity_df$CAEC, obesity_df$NObeyesdad)
+```
+Chi-sqaure test show that there is evidence to reject the _Null Hypothesis_ and conclude that there is _some relationship between taking food between meals and obesity as p-vale < `0.001`_.
+
+
+## Investigate the relationship between high calories consumption (FAVC) and weight and BMI
+
+Lets create a crosstable between consumption of high calories and obesity levels.
+
+```{r, warning=FALSE, echo=FALSE}
+
+cross_tab.3 <- table(obesity_df$FAVC, obesity_df$NObeyesdad)
+addmargins(cross_tab.3, FUN=sum, quiet=TRUE)
+
+```
+```{r}
+(340+290+323+254+216)/(351+297+324+276+290) * 100
+```
+The above table with marginal totals shows that the persons having obesity do take food with high calories.  **`92.5`%** of the persons having obesity take food with high calories. 
+
+Lets perform a `chi-square` test to check for relationship will exist in the population.
+
+```{r,warning=FALSE}
+chisq.test(obesity_df$FAVC, obesity_df$NObeyesdad)
+```
+
+Chi-sqaure test show that there is evidence to reject the _Null Hypothesis_ and conclude that there is some _relationship between taking foods with high calories and obesity as p-vale < `0.001`._
+
+
+
+## Investigate the relationship of physical activity with weight, height and BMI
+
+Let plot some scatter plots to check the frequency of physical activity (FAF) against Weight, Height and BMI.
+
+```{r, fig.align='center', fig.show='hold'}
+ggplot(obesity_df, aes(x=Weight, y=FAF)) + geom_point() + labs(title="Scatter plot of Frequency of physical activity against Weight",x="Weight", y="FAF")
+ggplot(obesity_df, aes(x=Height, y=FAF)) + geom_point() + labs(title="Scatter plot of Frequency of physical activity against Height", x="Height", y="FAF")
+ggplot(obesity_df, aes(x=BMI, y=FAF)) + geom_point() + labs(title="Scatter plot of Frequency of physical activity against BMI", x="BMI", y="FAF")
+```
+
+No apparent relationship is conclusive from the scatter plots. Lets perform a `t-test` to check any relationship between these variables in the population.
+
+```{r}
+cor.test(obesity_df$Weight, obesity_df$FAF)
+cor.test(obesity_df$Height, obesity_df$FAF)
+cor.test(obesity_df$BMI, obesity_df$FAF)
+```
+
+From the above t-test, we see that there is a small _negative correlation_ between BMI and _physical activity (FAF)_, which makes sense and the data also corroborates the same. Therefore as physical activity increases, BMI tends to decrease, hence _increased physical activity will help in reduction of obesity_.
+
+
+## Investigate the relationship between family history with overweight and Weight and BMI
+
+Lets create a box-plot of Weight across family history with overweight.
+
+```{r, fig.show='hold'}
+ggplot(obesity_df) + 
+  geom_boxplot(aes(y=Weight, x=1,color=family_history_with_overweight)) + 
+  labs(title="Box plot of Weight",y="Weight") + facet_wrap(~family_history_with_overweight)
+
+```
+From above box-plots, we clearly see that the Weight of the persons having family history with overweight is much higher than than those _not_ having family history with overweight.
+
+
+Lets create a box-plot of BMI across family history with overweight.
+
+```{r, fig.show='hold'}
+ggplot(obesity_df) + 
+  geom_boxplot(aes(y=BMI, x=1,color=family_history_with_overweight)) + 
+  labs(title="Box plot of BMI",y="BMI") + facet_wrap(~family_history_with_overweight)
+
+```
+
+From above box-plots we clearly see that the BMI of persons having family history with overweight is much higher than than those _not_ having family history with overweight.
+
+
+
+**Based on the above exploratory data analysis of the obesity dataset, we have observed that there is relationship of physical activity and eating habits with BMI and obesity. Therefore we can fit a model to _predict BMI and Obesity using physical activity and eating habits._**
+
+
+## Linear regression model to predict BMI using eating habits and physical activity.
+
+Lets create a copy of the obesity data and drop the obesity level column as this model will predict BMI.
+
+```{r}
+lin_reg_df <- obesity_df %>% select(-NObeyesdad)
+```
+
+Lets drop Weight and Height as we will use only eating habits and physical activity variables as predictors. 
+
+```{r}
+lin_reg_df <- lin_reg_df %>% select(-c(Weight,Height))
+```
+
+Fit a linear regression model using all columns as predictors.
+
+```{r}
+linear.model.1 <- lm(BMI ~ ., lin_reg_df)
+```
+
+Summary of the model
+```{r}
+summary(linear.model.1)
+```
+The $R^2$ value is `0.5` which shows that **`50`**% variation in BMI is accounted by the predictors. Therefore we can consider that the predictor variables are a good fit to predict BMI.
+
+## Next Steps.
+
+ - Create a Logistic Regression model to predict obesity.
+ - Explore for potential improvement areas of the linear regression model using less number of predictors with a lower AIC and better fit. Check for bias and outliers. Investigate if removal of outliers aid in better model fit.
+ - Check for linearity, homoscedasticity, and normality assumptions of the models. 
+ - Investigate if factors other than eating habits and physical activity like ethnicity and geography also influence obesity using CDC Nutrition, Physical Activity, and Obesity dataset (CDC, 2023).
+ - Summarize the observations and findings.
+ 
+## Project Step 3
+
+## Logistic Regression model to predict obesity
+
+As we are only predicting _risk of obesity_ as a binary class (risk: yes or no), so lets create a column named Obesity and assign value `1` if the Obesity level is other than _Insufficient_Weight or Normal_Weight_.
+
+```{r}
+obesity_df$Obesity <- ifelse(obesity_df$NObeyesdad == "Insufficient_Weight" | obesity_df$NObeyesdad == "Normal_Weight", 0, 1 )
+```
+
+```{r}
+obesity.model1 <- glm(Obesity ~  Gender + Age + family_history_with_overweight + FAVC + 
+                       FCVC + NCP + CAEC + SMOKE + CH2O + SCC + CALC+
+                       FAF + TUE + MTRANS, data=obesity_df, family=binomial())
+
+
+```
+
+```{r, include=FALSE}
+obesity.model2 <- glm(Obesity ~  Gender + Age + family_history_with_overweight + FAVC 
+                        + NCP + CAEC  + CH2O + CALC +
+                       FAF  + TUE + MTRANS, data=obesity_df, family=binomial())
+```
+
+```{r, include=FALSE}
+obesity.model1
+obesity.model2
+```
+
+```{r, include=FALSE}
+#Chi square probability
+chisq.prob <- 1 - pchisq((obesity.model1$deviance - obesity.model2$deviance),(obesity.model1$df.residual - obesity.model1$df.residual))
+chisq.prob
+
+anova(obesity.model1, obesity.model2)
+```
+
+Investigate for most important predictors
+
+```{r}
+data.frame(exp(obesity.model1$coefficients))
+```
+**From the above odds-ratio table we can clearly see that the below predictors have most influence on obesity.**
+
+ **1. Family history with overweight**
+ 
+ **2. Consumption of alcohol**
+ 
+ **3. Consumption of food between meals**
+ 
+ 
+## Explore for potential improvement areas of the linear regression model using less number of predictors with a lower AIC and better fit. Check for bias and outliers. Investigate the model fit.
+
+Fit another linear regression model using all columns as predictors except `Age`.
+
+```{r}
+lin_reg_df <- lin_reg_df %>% select(-c(Age))
+linear.model.2 <- lm(BMI ~ ., lin_reg_df)
+```
+
+
+Summary of the model
+
+```{r}
+summary(linear.model.2)
+```
+Compare AIC between two models
+
+```{r, warning=FALSE}
+library(AICcmodavg)
+
+#define list of models
+models <- list(linear.model.1, linear.model.2)
+
+#specify model names
+mod.names <- c('linear.reg.model.1', 'linear.reg.model.1')
+
+#calculate AIC of each model
+aictab(cand.set = models, modnames = mod.names)
+```
+
+**Based on AIC we see that AIC of Model 2 is higher, so Model 1 is better fit**
+
+Check Bias and Outliers
+
+```{r}
+#Store Residuals and Cook's distance as columns of a dataframe
+df.model.1 <- data.frame(BMI=lin_reg_df$BMI)
+df.model.1$residuals <- resid(linear.model.1)
+df.model.1$cooks_distance <- cooks.distance(linear.model.1)
+df.model.1$standardized_residuals <- rstandard(linear.model.1)
+
+```
+
+Check if any standardized residuals  less than `-2` or greater than > `2`
+
+```{r}
+df.model.1$large_residual <- df.model.1$standardized_residuals > 2 | df.model.1$standardized_residuals < -2
+sum(df.model.1$large_residual)
+```
+
+Check for data points with Cook's distance greater than 1
+
+```{r}
+# cook's distance
+head(df.model.1[df.model.1$cooks_distance > 1,])
+```
+
+**As there are _no standardized residuals less than -2 or standardized residuals greater than 2_, we can say that there is no substantial outlier problem in the model. Furthermore there are no instances with _Cook's distance greater 1_, so we can say that there is no substantial influential cases for the model. _Therefore, the model seem to have no issues with bias or outliers._**
+
+
+#### Based on the above model analysis using AIC, Standardized residuals, and Cook's distance we notice that Model 1 is a good fit and we do not improve the fit by reducing the number of predictors.
+
+ 
+### Check for Linearity and Normality of both the linear and logistic regression models
+
+#### Linear Model  
+
+Lets use VIF to check for multicollinearity 
+
+```{r}
+vif(linear.model.1)
+1/vif(linear.model.1)
+mean(vif(linear.model.1))
+```
+**From the above results we see that _VIF is not greater than `10` and 1/VIF is not less than `0.2`_. The _mean VIF is not substantially greater than `1`_, so we can say there is _no evidence of any problem of multicollinearity in the linear regreesion model_**.
+
+Lets plot residuals to check for homoscedasticity, and normality
+
+```{r}
+linear_obesity_df <- obesity_df
+linear_obesity_df$residuals <- resid(linear.model.1)
+linear_obesity_df$fitted <- linear.model.1$fitted.values
+linear_obesity_df$standard_residuals <- rstandard(linear.model.1)
+linear_obesity_df$cooks_distance <- cooks.distance(linear.model.1)
+
+```
+
+```{r, echo=FALSE,warning=FALSE, fig.show='hold', fig.pos='h', fig.cap="Scatter Plot of Residuals vs Fitted Values"}
+ggplot(linear_obesity_df,aes(x=fitted, y=residuals)) + geom_point() + stat_smooth(method="lm") +
+  labs(x="Fitted Values", y="Residuals")
+```
+
+We do notice a mild funneling shape, so there is a _slight deviation of assumption of homoscedasticity._
+
+```{r, warning=FALSE}
+ggplot(linear_obesity_df, aes(sample=residuals)) + stat_qq() + stat_qq_line(color="blue") + labs(title="QQ plot of residuals",x="Theoritical Values", y="Observed Values")
+```
+_The plot is very well aligned to the normal line (blue), so the assumption of normality is maintained._
+
+#### Logistic Regression Model  
+
+Lets use VIF to check for multicollinearity
+
+```{r}
+vif(obesity.model1)
+1/vif(obesity.model1)
+mean(vif(obesity.model1))
+```
+**From the above results we see that _VIF is not greater than `10`_ and _1/VIF is not less than `0.2`_. The _mean VIF is not substantially greater than `1`_, so we can say there is no evidence of problem of multicollinearity in the logistic regression model.**
+
+
+
+
+## Investigate if factors other than eating habits and physical activity like `ethnicity` and `geography` also influence obesity using CDC Nutrition, Physical Activity, and Obesity dataset (CDC, 2023).
+
+Import and inspect first few rows
+
+```{r, echo=FALSE}
+cdc_df <- read.csv("C:/Users/babub/Documents/Bellevue/DSC520/Nutrition__Physical_Activity__and_Obesity_Behavioral_Risk_Factor_Surveillance_System.csv")
+head(cdc_df)
+```
+
+
+Lets drop columns having NAs in _Data_Value_ column
+
+```{r}
+cdc_obesity_df <- cdc_df %>% select(YearStart, LocationAbbr,LocationDesc,Gender, Data_Value) %>%drop_na()
+```
+
+Lets filter only rows having value `Percent of adults aged 18 years and older who have obesity` in _Question_ column and _StratificationCategoryId1_ column as `GEN`
+
+```{r}
+cdc_obesity_df_gen <- cdc_df %>% filter(Question == "Percent of adults aged 18 years and older who have obesity" & StratificationCategoryId1 == "GEN")
+```
+
+Lets sum of Data_Value column by each State/Location to calculate _total percentage of obesity for each Location by each Year_.
+
+```{r, warning=FALSE}
+cdc_obesity_df_by_year <- cdc_obesity_df_gen %>% group_by(LocationAbbr, YearStart) %>% summarize(obesity_percentage=sum(Data_Value)/2) # sum is divided by two as we have summed up two genders and need the average
+cdc_obesity_df_by_year$state <- cdc_obesity_df_by_year$LocationAbbr
+```
+
+**Lets plot 5 years Obesity percentage by states from 2016 to 2021.**
+
+```{r, include=FALSE}
+cdc_obesity_df_by_year_2021 <- cdc_obesity_df_by_year[cdc_obesity_df_by_year$YearStart==2021, ]
+cdc_obesity_df_by_year_2021$state <- cdc_obesity_df_by_year_2021$LocationAbbr
+
+ggplot(cdc_obesity_df_by_year_2021, aes(x=LocationAbbr, y=obesity_percentage)) +geom_bar(stat="identity", aes(color=LocationAbbr, fill=LocationAbbr)) + theme(axis.text.x = element_text(angle=90, vjust=.5, hjust=1))
+```
+
+```{r,}
+
+for (year in 2016:2021){
+  
+  cdc_obesity_by_year_plotting_df <- cdc_obesity_df_by_year[cdc_obesity_df_by_year$YearStart==year, ]
+  
+  us_map <- plot_usmap(data = cdc_obesity_by_year_plotting_df, values = "obesity_percentage", color = "red",    
+             labels=FALSE) + 
+  scale_fill_continuous(
+    low = "white", high = "red", name = paste("Obesity Percentage in Adults,",year), label = scales::comma
+  ) + theme(legend.position = "right")
+  
+  plot(us_map)
+  
+}
+
+```
+
+**The above maps clearly shows that the Obesity percentage is much higher in `South Eastern`, `Midwest` and `Southern` states as compared to `Western` states. Hence, we  observe that the obesity vary by geography.**
+
+
+Lets filter only rows having value `Percent of adults aged 18 years and older who have obesity` in _Question_ column and _StratificationCategoryId1_ column as `RACE`
+
+```{r}
+cdc_obesity_df_race <- cdc_df %>% filter(Question == "Percent of adults aged 18 years and older who have obesity" & StratificationCategoryId1 == "RACE") %>% select(YearStart, LocationAbbr, LocationDesc, Data_Value, Race.Ethnicity) %>% tidyr::drop_na()
+```
+
+Lets calculate mean of Data_Value column by each Race/Ethnicity to get _average percentage of obesity_ for each Race/Ethnicity across entire USA by each Year.
+
+```{r, warning=FALSE}
+cdc_obesity_df_by_year_race <- cdc_obesity_df_race %>% group_by(Race.Ethnicity, YearStart) %>% summarize(obesity_percentage=mean(Data_Value))
+```
+
+**Lets plot 5 years Obesity percentage by Race from 2016 to 2021.**
+
+```{r, include=TRUE}
+for (year in 2016:2021){
+  cdc_obesity_df_year_race_plotting_df <- cdc_obesity_df_by_year_race[cdc_obesity_df_by_year_race$YearStart==year, ]
+  
+  bar <- ggplot(cdc_obesity_df_year_race_plotting_df, aes(x=
+  Race.Ethnicity, y=obesity_percentage)) +geom_bar(stat="identity", aes(fill=
+  Race.Ethnicity)) + theme(axis.text.x = element_text(angle=90, vjust=.5, hjust=1)) + 
+    labs(title=paste(year),x="Race/Ethnicity", y="Average Obesity Percentage", fill="Race/Ethnicity")
+  plot(bar)
+}
+```
+
+**From the above plots, we notice that the obesity is higher among "Hawaiian/Pacific Islander", "Hispanic", "Non-Hispanic Black" and "American Indian/Alaska Native" as compared to "Asian" ethnicity/race. Hence, we observe that obesity vary by race and ethnicity.**
+
+## Limitations
+
+Even though we have found evidence to confirm the relationship of BMI and Obesity with eating habits and physical activity, we still cannot imply causation. We cannot say that obesity is caused by bad eating habits or lack of physical activity based on the above analysis. We must perform causal analyses like control testing and Pareto analysis to confirm causation.
+
+In the above analysis, we have already identified that ethnicity and geography might influence obesity. The above study and predictive modeling we have performed do not consider other important factors that might also highly impact obesity. However, we still see that eating habits and physical activity has a significant relationship with BMI and obesity. 
+
+## Conclusion
+
+From the above research and data analysis, we have identified that BMI and Obesity have a relationship with eating habits and physical activity. 
+
+The correlation heatmap, correlation coefficients, and correlation t-tests show evidence of the relationship between BMI and eating habits like number of meals, consumption of vegetables, consumption of water, and frequency of physical activity. Similarly, boxplots, cross tables, and chi-squared tests show that there is evidence of the relationship between obesity and eating habits like high calorific food consumption, taking food between meals, alcohol consumption, and a family history of being overweight.
+
+We also investigated that data model can be fitted to predict BMI and Obesity based on eating habits and physical activity. The above model analysis for bias, outliers, and linearity assumptions shows that the linear regression model to predict BMI and logistic regression to predict Obesity risk are feasible. Therefore, BMI and Obesity can be predicted based on eating habits and physical activity. 
+
+From the logistics regression model analysis, we see that a family history of being overweight, consumption of alcohol, and consumption of food between meals are the essential factors in predicting obesity risk, which do line up with general understanding. Hence, we can educate people about these leading factors, which can help to reduce the risk of obesity.
+
+
+## References
+
+  Body Mass Index. (n.d.). _Centers for Disease Control and Prevention._             
+   **https://www.cdc.gov/healthyweight/assessing/bmi/index.html#:~:text=Body%20Mass%20Index%20(BMI),**    
+   **%20is,or%20health%20of%20an%20individual.**
+  
+  Defining Adult Overweight & Obesity. (n.d.). _Centers for Disease Control and Prevention._             
+   **https://www.cdc.gov/obesity/basics/adult-defining.html**     
+  
+  Estimation of obesity levels based on eating habits and physical condition. (2019). _UCI Machine 
+   Learning Repository._ **https://doi.org/10.24432/C5H31Z.**
+  
+  Gozukara Bag, H.G., Yagin, F.H., Gormez, Y., González, P.P., Colak, C., Gülü, M., Badicu, G., Ardigò,      L.P. 2023. Estimation of Obesity Levels through the Proposed Predictive Approach Based on Physical 
+   Activity and Nutritional Habits. _Diagnostics_. 13(18), 2949. 
+   **https://doi.org/10.3390/diagnostics13182949**
+  
+  Nutrition, Physical Activity, and Obesity - Behavioral Risk Factor Surveillance System. (2023). 
+   _Centers for Disease Control and Prevention._             
+   **https://data.cdc.gov/Nutrition-Physical-Activity-and-Obesity/**
+   **Nutrition-Physical-Activity-and-Obesity-Behavioral/hn4x-zwk7**
+      
+  Palechor, F.M., de la Hoz Manotas, A. (2019). Dataset for estimation of obesity levels based on eating 
+   habits and physical condition in individuals from Colombia, Peru and Mexico. _Data Brief_. 25, 104344. 
+   **https://doi.org/10.1016/j.dib.2019.104344**
+                  
+
